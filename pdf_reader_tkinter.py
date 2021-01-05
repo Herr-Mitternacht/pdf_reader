@@ -9,7 +9,7 @@ import tkinter.filedialog
 import fitz
 import os
 from PIL import Image, ImageTk
-
+from tkscrolledframe import ScrolledFrame
 root = tk.Tk()
 
 class pdf_func:
@@ -20,18 +20,26 @@ class pdf_func:
 		self.current_page_num = 0
 		self.root = root
 		
-		#set a frame, the pdf file and the scrollbar will be inside
-		
-		
-		self.zoom = 2    # zoom factor
+		# Create a ScrolledFrame widget
+		sf = ScrolledFrame(self.root, width=640, height=480)
+		sf.grid(column=0, row=1, columnspan=3)		
+		# Bind the arrow keys and scroll wheel
+		sf.bind_arrow_keys(self.root)
+		sf.bind_scroll_wheel(self.root)
+		# Create a frame within the ScrolledFrame
+		self.inner_frame = sf.display_widget(tk.Frame)
+								
+		# zoom factor will control the resolution, not size!!!
+		self.zoom = 5    
 		self.mat = fitz.Matrix(self.zoom, self.zoom)
 		
 		self.button_open_file = tk.Button(root, text="open file", bg="steel blue1", command=self.open_file)
 		self.button_open_file.grid(column=0, row=0)
+				
 		
 	def show_pdf(self, image):
-		pdf_label = tk.Label(image=image)
-		pdf_label.grid(column=0, row=1, columnspan=3)
+		pdf_label = tk.Label(self.inner_frame, image=image)
+		pdf_label.pack()
 		
 		
 	def open_file(self):
